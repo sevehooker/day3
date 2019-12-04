@@ -33,7 +33,6 @@ export class AppComponent  {
   constructor() {
     let origin: Position = [0,0];
 
-console.log('wake the fuck up!');
     let path1 = [origin].concat(this.wire1.split(',').map(op => {
       origin = this.followWire(op, origin);
       return origin;
@@ -64,32 +63,37 @@ console.log('wake the fuck up!');
     let trueOrigin = path1[0];
 
     let intersects = [];
-    console.log(intersects);
 
-    // path1.forEach((pos1, i) => path2.forEach((pos2, j) => {
-    //   if (!i || !j) return;
+    path1.forEach((pos1, i) => path2.forEach((pos2, j) => {
+      if (!i || !j) return;
 
-    //   if (pos1[1] !== path1[i-1][1] && pos2[0] !== path2[j-1][0]) {
-    //     for (let ii = Math.min(path1[i-1][1], pos1[1]); ii < Math.max(path1[i-1][1], pos1[1]); ii++) {
-    //       for (let jj = Math.min(path2[j-1][0], pos2[0]); jj < Math.max(path2[j-1][0], pos2[0]); jj++) {
-    //         if (ii === jj) {
-    //           intersects.push([pos1[0], pos2[1]]);
-    //           return;
-    //         }
-    //       }
-    //     }
-    //   } else if (pos1[0] !== path1[i-1][0] && pos2[1] !== path2[j-1][1]) {
-    //     for (let ii = Math.min(path1[i-1][0], pos1[0]); ii < Math.max(path1[i-1][0], pos1[0]); ii++) {
-    //       for (let jj = Math.min(path2[j-1][1], pos2[1]); jj < Math.max(path2[j-1][1], pos2[1]); jj++) {
-    //         if (ii === jj) {
-    //           intersects.push([pos1[1], pos2[0]]);
-    //           return;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }));
-    console.log(intersects);
+      if (pos1[1] !== path1[i-1][1] && pos2[0] !== path2[j-1][0]) {
+        for (let ii = Math.min(path1[i-1][1], pos1[1]); ii < Math.max(path1[i-1][1], pos1[1]); ii++) {
+          for (let jj = Math.min(path2[j-1][0], pos2[0]); jj < Math.max(path2[j-1][0], pos2[0]); jj++) {
+            if (ii === jj) {
+              intersects.push([pos1[0], pos2[1]]);
+              return;
+            }
+          }
+        }
+      } else if (pos1[0] !== path1[i-1][0] && pos2[1] !== path2[j-1][1]) {
+        for (let ii = Math.min(path1[i-1][0], pos1[0]); ii < Math.max(path1[i-1][0], pos1[0]); ii++) {
+          for (let jj = Math.min(path2[j-1][1], pos2[1]); jj < Math.max(path2[j-1][1], pos2[1]); jj++) {
+            if (ii === jj) {
+              intersects.push([pos1[1], pos2[0]]);
+              return;
+            }
+          }
+        }
+      }
+    }));
+    // console.log(intersects);
+
+    let result = path1.splice(1).concat(path2.splice(1)).reduce((closest, pos) => {
+      return Math.min(closest, Math.abs(pos[0]-trueOrigin[0]) + Math.abs(pos[1]-trueOrigin[1]));
+    }, 10000);
+
+    console.log(result);
 
     [this.width, this.height] = [maxWidth, maxHeight];
     // this.gridStyle = {
