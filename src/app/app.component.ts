@@ -62,6 +62,22 @@ export class AppComponent  {
 
     let trueOrigin = path1[0];
 
+    let intersects = [];
+
+    path1.forEach((pos1, i) => path2.forEach((pos2, j) => {
+      if (!i || !j) return;
+
+      if (pos1[1] !== path1[i-1][1] && pos2[0] !== path2[j-1][0]) {
+        for (let ii= Math.min(path1[i-1][1], pos1[1]); ii< Math.max(path1[i-1][1], pos1[1]); ii++) {
+          for (let jj = Math.min(path2[j-1][0], pos2[0]); jj < Math.max(path2[j-1][0], pos2[j]); jj++) {
+            if (ii === jj) {
+              intersects.push([pos1[0], pos2[j][1]]);
+            }
+          }
+        }
+      }
+    }));
+
     [this.width, this.height] = [maxWidth, maxHeight];
     // this.gridStyle = {
     //   'display': 'grid',
