@@ -51,6 +51,16 @@ export class AppComponent  {
       ]
     }, [0,0,0,0]);
 
+    path1 = path1.map(pos => [pos[0] - minWidth, pos[1] - minHeight]);
+    path2 = path2.map(pos => [pos[0] - minWidth, pos[1] - minHeight]);
+
+    maxWidth -= minWidth;
+    maxHeight -= minHeight;
+
+    let origin = path1[0];
+
+    console.log(origin, path1[0], path2[0]);
+
     console.log(minHeight, minWidth, maxWidth, maxHeight);
   }
 
