@@ -30,17 +30,17 @@ export class AppComponent  {
   constructor() {
     let curPos: Position = [0,0];
 
-    let path1 = this.wire1.split(',').map(op => {
+    let path1 = [curPos].concat(this.wire1.split(',').map(op => {
       curPos = this.followWire(op, curPos);
       return curPos;
-    });
+    }));
 
     curPos = [0,0];
 
-    let path2 = this.wire2.split(',').map(op => {
+    let path2 = [curPos].concat(this.wire2.split(',').map(op => {
       curPos = this.followWire(op, curPos);
       return curPos;
-    });
+    }));
 
     let [minWidth, minHeight, maxWidth, maxHeight] = path1.concat(path2).reduce((extremes, curPos) => {
       return [
@@ -59,9 +59,7 @@ export class AppComponent  {
 
     let origin = path1[0];
 
-    console.log(origin, path1[0], path2[0]);
-
-    console.log(minHeight, minWidth, maxWidth, maxHeight);
+    console.log(minWidth, minHeight, maxWidth, maxHeight);
   }
 
   followWire(op: string, pos: Position) {
