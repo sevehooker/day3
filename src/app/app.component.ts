@@ -16,6 +16,9 @@ export class AppComponent  {
   width = 0;
   height = 0;
 
+  gridStyle = {};
+  grid = [];
+
   // gridStyle$: Observable<any>;
   // grid$: Observable<Array[Position]>;
 
@@ -28,18 +31,18 @@ export class AppComponent  {
   // }
   
   constructor() {
-    let curPos: Position = [0,0];
+    let origin: Position = [0,0];
 
-    let path1 = [curPos].concat(this.wire1.split(',').map(op => {
-      curPos = this.followWire(op, curPos);
-      return curPos;
+    let path1 = [origin].concat(this.wire1.split(',').map(op => {
+      origin = this.followWire(op, origin);
+      return origin;
     }));
 
-    curPos = [0,0];
+    origin = [0,0];
 
-    let path2 = [curPos].concat(this.wire2.split(',').map(op => {
-      curPos = this.followWire(op, curPos);
-      return curPos;
+    let path2 = [origin].concat(this.wire2.split(',').map(op => {
+      origin = this.followWire(op, origin);
+      return origin;
     }));
 
     let [minWidth, minHeight, maxWidth, maxHeight] = path1.concat(path2).reduce((extremes, curPos) => {
@@ -57,9 +60,15 @@ export class AppComponent  {
     maxWidth -= minWidth;
     maxHeight -= minHeight;
 
-    let origin = path1[0];
+    let trueOrigin = path1[0];
 
-    console.log(minWidth, minHeight, maxWidth, maxHeight);
+    [this.width, this.height] = [maxWidth, maxHeight];
+    // this.gridStyle = {
+    //   'display': 'grid',
+    //   'grid-template-rows': `repeat(${this.height}, 1fr)`,
+    //   'grid-template-columns': `repeat(${this.width}, 1fr)`
+    // };
+    // this.grid = new Array(this.width*this.height).fill('🌳');
   }
 
   followWire(op: string, pos: Position) {
