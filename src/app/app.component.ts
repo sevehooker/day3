@@ -71,12 +71,21 @@ export class AppComponent  {
         for (let ii= Math.min(path1[i-1][1], pos1[1]); ii< Math.max(path1[i-1][1], pos1[1]); ii++) {
           for (let jj = Math.min(path2[j-1][0], pos2[0]); jj < Math.max(path2[j-1][0], pos2[j]); jj++) {
             if (ii === jj) {
-              intersects.push([pos1[0], pos2[j][1]]);
+              intersects.push([pos1[0], pos2[1]]);
+            }
+          }
+        }
+      } else if (pos1[0] !== path1[i-1][0] && pos2[1] !== path2[j-1][1]) {
+        for (let ii= Math.min(path1[i-1][1], pos1[1]); ii< Math.max(path1[i-1][1], pos1[1]); ii++) {
+          for (let jj = Math.min(path2[j-1][0], pos2[0]); jj < Math.max(path2[j-1][0], pos2[j]); jj++) {
+            if (ii === jj) {
+              intersects.push([pos1[1], pos2[0]]);
             }
           }
         }
       }
     }));
+    console.log(intersects);
 
     [this.width, this.height] = [maxWidth, maxHeight];
     // this.gridStyle = {
