@@ -68,7 +68,15 @@ export class AppComponent  {
 
     // let trueOrigin = path1[0];
 
-    let closest: [number, number, number, Position] = [100000, 0, 0, [0,0]];
+    let closest: [number, number, number] = [100000, 0, 0];
+    
+    let minPath1 = path1.reduce(this.getDist, 0);
+    let minPath2 = path2.reduce(this.getDist, 0);
+
+    console.log(minPath1);
+    // let intersections = [];
+    // let splitPaths1 = [path1.map(p => [p])];
+    // let splitPaths2 = [path2.map(p => [p])];
 
     path1.forEach((pos1, i) => path2.forEach((pos2, j) => {
       if (!i || !j) return;
@@ -76,37 +84,61 @@ export class AppComponent  {
       if (path1[i-1][1] < Math.max(path2[j-1][1], pos2[1]) && pos1[1] > Math.min(path2[j-1][1], pos2[1])
         && path2[j-1][0] < Math.max(path1[i-1][0], pos1[0]) && pos2[0] > Math.min(path1[i-1][0], pos1[0])) {
           if (closest[0] > (Math.abs(pos1[1]) + Math.abs(pos2[0]))) {
-            closest = [Math.abs(pos1[1]) + Math.abs(pos2[0]), i, j, [pos2[1],pos1[0]]];
+            // intersections.push([pos2[1],pos1[0]]);
+            // splitPaths1.splice(i, 0, [[pos2[1],pos1[0]].concat(path2.slice(j))]);
+            closest = [Math.abs(pos1[1]) + Math.abs(pos2[0]), i, j];
           }
       } else if (path1[i-1][0] < Math.max(path2[j-1][0], pos2[0]) && pos1[0] > Math.min(path2[j-1][0], pos2[0])
         && path2[j-1][1] < Math.max(path1[i-1][1], pos1[1]) && pos2[1] > Math.min(path1[i-1][1], pos1[1])) {
           if (closest[0] > (Math.abs(pos1[0]) + Math.abs(pos2[1]))) {
-            closest = [Math.abs(pos1[0]) + Math.abs(pos2[1]), i, j, [pos1[1], pos2[0]]];
+            // intersections.push([pos1[1],pos2[0]]);
+            closest = [Math.abs(pos1[0]) + Math.abs(pos2[1]), i, j];
           }
       }
+
     }));
 
-console.log(path1.slice(0,closest[1]).concat([closest[3]]), path2);
-    const steps1 = path1.slice(0,closest[1]).concat([closest[3]]).reduce((dist: number, pos, i) => {
-      if (i === 0) return 0;
-      if (path1[i-1][0] !== pos[0]) {
-        console.log(Math.abs(path1[i-1][0] - pos[0]));
-        return dist + Math.abs(path1[i-1][0] - pos[0]);
-      } else {
-        console.log(Math.abs(path1[i-1][1] - pos[1]));
-        return dist + Math.abs(path1[i-1][1] - pos[1]);
-      }
-    },0);
-    let steps2 = path2.slice(0,closest[2]).concat([closest[3]]).reduce((dist: number, pos, i) => {
-      if (i === 0) return 0;
-      if (path2[i-1][0] !== pos[0]) {
-        return dist + Math.abs(path2[i-1][0] - pos[0]);
-      } else {
-        return dist + Math.abs(path2[i-1][1] - pos[1]);
-      }
-    },0);
+    path1.forEach((pos1, i) => path2.forEach((pos2, j) => {
+      if (!i || !j) return;
 
-    console.log(closest, steps1, steps2, steps1+steps2);
+      if (path1[i-1][1] < Math.max(path2[j-1][1], pos2[1]) && pos1[1] > Math.min(path2[j-1][1], pos2[1])
+        && path2[j-1][0] < Math.max(path1[i-1][0], pos1[0]) && pos2[0] > Math.min(path1[i-1][0], pos1[0])) {
+
+          let intersect: Position = [pos2[1],pos1[0]];
+          minPath1 = Math.min(minPath1, path1.slice(0, i-1).concat([intersect], path2.slice(j, closest[2])).reduce(this.getDist, 0));
+          minPath2 = Math.min(minPath2, path2.slice(0, j-1).concat([intersect], path1.slice(i, closest[1])).reduce(this.getDist, 0));
+          console.log(minPath1, minPath2, path2,intersect, minPath2, path2.slice(0, j-1).concat([intersect], path1.slice(i)));
+      } else if (path1[i-1][0] < Math.max(path2[j-1][0], pos2[0]) && pos1[0] > Math.min(path2[j-1][0], pos2[0])
+        && path2[j-1][1] < Math.max(path1[i-1][1], pos1[1]) && pos2[1] > Math.min(path1[i-1][1], pos1[1])) {
+          
+          let intersect: Position = [pos1[1],pos2[0]];
+          minPath1 = Math.min(minPath1, path1.slice(0, i-1).concat([intersect], path2.slice(j, closest[2])).reduce(this.getDist, 0));
+          minPath2 = Math.min(minPath2, path2.slice(0, j-1).concat([intersect], path1.slice(i, closest[1])).reduce(this.getDist, 0));
+          console.log(minPath1, minPath2);
+      }
+
+    }));
+
+    // const steps1 = path1.slice(0,closest[1]).concat([closest[3]]).reduce((dist: number, pos, i) => {
+    //   if (i === 0) return 0;
+    //   // if (path1[i-1][1] < Math.max(path2[j-1][1], pos2[1]) && pos1[1] > Math.min(path2[j-1][1], pos2[1])
+    //   //   && path2[j-1][0] < Math.max(path1[i-1][0], pos1[0]) && pos2[0] > Math.min(path1[i-1][0], pos1[0]))
+    //   if (path1[i-1][0] !== pos[0]) {
+    //     return dist + Math.abs(path1[i-1][0] - pos[0]);
+    //   } else {
+    //     return dist + Math.abs(path1[i-1][1] - pos[1]);
+    //   }
+    // },0);
+    // let steps2 = path2.slice(0,closest[2]).concat([closest[3]]).reduce((dist: number, pos, i) => {
+    //   if (i === 0) return 0;
+    //   if (path2[i-1][0] !== pos[0]) {
+    //     return dist + Math.abs(path2[i-1][0] - pos[0]);
+    //   } else {
+    //     return dist + Math.abs(path2[i-1][1] - pos[1]);
+    //   }
+    // },0);
+
+    console.log(closest, minPath1, minPath2, minPath1+minPath2);
 
     // [this.width, this.height] = [maxWidth, maxHeight];
     // this.gridStyle = {
@@ -115,6 +147,15 @@ console.log(path1.slice(0,closest[1]).concat([closest[3]]), path2);
     //   'grid-template-columns': `repeat(${this.width}, 1fr)`
     // };
     // this.grid = new Array(this.width*this.height).fill('🌳');
+  }
+
+  getDist(dist: number, pos, i, path) {
+    if (i === 0) return 0;
+    if (path[i-1][0] !== pos[0]) {
+      return dist + Math.abs(path[i-1][0] - pos[0]);
+    } else {
+      return dist + Math.abs(path[i-1][1] - pos[1]);
+    }
   }
 
   followWire(op: string, pos: Position) {
@@ -126,4 +167,48 @@ console.log(path1.slice(0,closest[1]).concat([closest[3]]), path2);
       pos[1] + (dir === 'U' ? dist : dir === 'D' ? -dist : 0)
     ] as Position;
   }
+
+  // dijkstra(path: Position) { 
+  //   let [dist, sptSet] = path.map(_ => [1000000, false]);
+
+  //   // sptSet[i] will be true if vertex i is included in shortest 
+  //   // path tree or shortest distance from src to i is finalized 
+  
+  //   // Distance of source vertex from itself is always 0 
+  //   dist[src] = 0; 
+  
+  //   // Find shortest path for all vertices 
+  //   for (int count = 0; count < V - 1; count++) { 
+  //       // Pick the minimum distance vertex from the set of vertices not 
+  //       // yet processed. u is always equal to src in the first iteration. 
+  //       int u = minDistance(dist, sptSet); 
+  
+  //       // Mark the picked vertex as processed 
+  //       sptSet[u] = true; 
+  
+  //       // Update dist value of the adjacent vertices of the picked vertex. 
+  //       for (int v = 0; v < V; v++) 
+  
+  //           // Update dist[v] only if is not in sptSet, there is an edge from 
+  //           // u to v, and total weight of path from src to  v through u is 
+  //           // smaller than current value of dist[v] 
+  //           if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX 
+  //               && dist[u] + graph[u][v] < dist[v]) 
+  //               dist[v] = dist[u] + graph[u][v]; 
+  //   } 
+  
+  //   // print the constructed distance array 
+  //   printSolution(dist); 
+  // } 
+
+  // minDistance(dist: number[], sptSet: boolean[]) { 
+  //     // Initialize min value 
+  //     int min = INT_MAX, min_index; 
+    
+  //     for (int v = 0; v < V; v++) 
+  //         if (sptSet[v] == false && dist[v] <= min) 
+  //             min = dist[v], min_index = v; 
+    
+  //     return min_index; 
+  // } 
 }
